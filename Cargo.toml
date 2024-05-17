@@ -1,5 +1,7 @@
-[workspace]
-resolver = "2"
-members = [
-	"cli"
-]
+workspace = { members = ["config"] }
+[package]
+name = "mockery"
+version = "0.1.0"
+
+[dependencies]
+config = { path = "./config/" }

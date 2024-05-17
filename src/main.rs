@@ -1,3 +1,5 @@
+extern crate config;
+
 fn main() {
-    println!("Hello, world!");
+    // cli and organizing code happens here
 }

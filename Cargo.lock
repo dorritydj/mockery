@@ -3,5 +3,12 @@
 version = 3
 
 [[package]]
-name = "cli"
+name = "config"
 version = "0.1.0"
+
+[[package]]
+name = "mockery"
+version = "0.1.0"
+dependencies = [
+ "config",
+]
