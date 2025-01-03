@@ -1,0 +1,14 @@
+{
+	"id": "route-foo",
+	"uri": "/foo",
+	"variants": {
+		"success": {
+			"default": true,
+			"method": "GET",
+			"status": 200,
+			"body": {
+				"bar": "baz"
+			}
+		}
+	}
+}
