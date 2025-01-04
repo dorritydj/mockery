@@ -6,13 +6,22 @@ import (
 	"io/fs"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 type Server struct {
-	Mux *http.ServeMux
+	http.ServeMux
 }
 
-func (s *Server) ParseFile(path string, d fs.DirEntry, err error) error {
+func (s *Server) ReadFiles(dir string) {
+	err := filepath.WalkDir(dir, s.parseFile)
+
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+}
+
+func (s *Server) parseFile(path string, d fs.DirEntry, err error) error {
 	if err != nil {
 		return err
 	}
@@ -31,6 +40,7 @@ func (s *Server) ParseFile(path string, d fs.DirEntry, err error) error {
 		}
 
 		req := fmt.Sprintf("%s %s", endpoint.Method, endpoint.ParseUri())
+
 		def, err := endpoint.GetDefaultResponse()
 		if err != nil {
 			fmt.Printf("no default response available for %s\n", req)
@@ -38,7 +48,7 @@ func (s *Server) ParseFile(path string, d fs.DirEntry, err error) error {
 
 		fmt.Println(req)
 
-		s.Mux.HandleFunc(req, func(w http.ResponseWriter, r *http.Request) {
+		s.HandleFunc(req, func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(def.Status)
 
 			data, err := json.Marshal(def.Body)
@@ -49,5 +59,6 @@ func (s *Server) ParseFile(path string, d fs.DirEntry, err error) error {
 			w.Write(data)
 		})
 	}
+
 	return nil
 }
