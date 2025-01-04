@@ -9,7 +9,7 @@ import (
 
 func main() {
 	app := &internals.Server{}
-	app.ReadFiles("./routes")
+	app.ParseConfigFiles("./routes")
 
 	err := http.ListenAndServe(":8080", app)
 	if err != nil {

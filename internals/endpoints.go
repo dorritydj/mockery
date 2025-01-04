@@ -12,7 +12,7 @@ type Endpoint struct {
 	Variants map[string]Variant
 }
 
-type Endpoints map[string]Endpoint
+type Endpoints []Endpoint
 
 type Variant struct {
 	Status  int  `json:"status"`

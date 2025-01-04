@@ -11,37 +11,38 @@ import (
 
 type Server struct {
 	http.ServeMux
+	endpoints Endpoints
 }
 
-func (s *Server) ReadFiles(dir string) {
-	err := filepath.WalkDir(dir, s.parseFile)
+func (s *Server) ParseConfigFiles(dir string) {
+	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !d.IsDir() {
+			endpoint, err := getEndpointFromFile(path)
+			if err != nil {
+				return err
+			}
+			s.endpoints = append(s.endpoints, endpoint)
+		}
+
+		return nil
+	})
 
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
+
+	s.addEndpointHandlers()
 }
 
-func (s *Server) parseFile(path string, d fs.DirEntry, err error) error {
-	if err != nil {
-		return err
-	}
+func (s *Server) addEndpointHandlers() {
+	for _, e := range s.endpoints {
+		req := fmt.Sprintf("%s %s", e.Method, e.ParseUri())
 
-	if !d.IsDir() {
-		var endpoint Endpoint
-
-		file, err := os.ReadFile(path)
-		if err != nil {
-			return err
-		}
-
-		err = json.Unmarshal(file, &endpoint)
-		if err != nil {
-			return err
-		}
-
-		req := fmt.Sprintf("%s %s", endpoint.Method, endpoint.ParseUri())
-
-		def, err := endpoint.GetDefaultResponse()
+		def, err := e.GetDefaultResponse()
 		if err != nil {
 			fmt.Printf("no default response available for %s\n", req)
 		}
@@ -59,6 +60,20 @@ func (s *Server) parseFile(path string, d fs.DirEntry, err error) error {
 			w.Write(data)
 		})
 	}
+}
 
-	return nil
+func getEndpointFromFile(path string) (Endpoint, error) {
+	var endpoint Endpoint
+
+	file, err := os.ReadFile(path)
+	if err != nil {
+		return endpoint, err
+	}
+
+	err = json.Unmarshal(file, &endpoint)
+	if err != nil {
+		return endpoint, err
+	}
+
+	return endpoint, nil
 }
