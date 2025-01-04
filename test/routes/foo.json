@@ -4,13 +4,13 @@
 	"method": "GET",
 	"variants": {
 		"success": {
-			"default": true,
 			"status": 200,
 			"body": {
 				"bar": "baz"
 			}
 		},
 		"unauthorized": {
+			"default": true,
 			"status": 401
 		}
 	}

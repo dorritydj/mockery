@@ -20,7 +20,7 @@ type Variant struct {
 	Body    any  `json:"body"`
 }
 
-func (e Endpoint) GetDefaultResponse() Variant {
+func (e Endpoint) GetDefaultResponse() (Variant, error) {
 	var found Variant
 	for _, v := range e.Variants {
 		if v.Default {
@@ -28,7 +28,7 @@ func (e Endpoint) GetDefaultResponse() Variant {
 		}
 	}
 
-	return found
+	return found, nil
 }
 
 func (e Endpoint) ParseUri() string {

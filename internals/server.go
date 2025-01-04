@@ -31,7 +31,10 @@ func (s *Server) ParseFile(path string, d fs.DirEntry, err error) error {
 		}
 
 		req := fmt.Sprintf("%s %s", endpoint.Method, endpoint.ParseUri())
-		def := endpoint.GetDefaultResponse()
+		def, err := endpoint.GetDefaultResponse()
+		if err != nil {
+			fmt.Printf("no default response available for %s\n", req)
+		}
 
 		fmt.Println(req)
 
