@@ -1,14 +1,17 @@
 {
 	"id": "route-foo",
 	"uri": "/foo",
+	"method": "GET",
 	"variants": {
 		"success": {
 			"default": true,
-			"method": "GET",
 			"status": 200,
 			"body": {
 				"bar": "baz"
 			}
+		},
+		"unauthorized": {
+			"status": 401
 		}
 	}
 }

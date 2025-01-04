@@ -1,10 +1,10 @@
 {
 	"id": "slug-test",
 	"uri": "/route/:id",
+	"method": "GET",
 	"variants": {
 		"success": {
 			"default": true,
-			"method": "POST",
 			"status": 200,
 			"body": {
 				"bing": "bang"
