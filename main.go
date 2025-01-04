@@ -56,7 +56,6 @@ func (e Endpoint) parseUri() string {
 }
 
 func main() {
-	// todo: config via env
 	dir := "./routes"
 
 	mux := http.NewServeMux()
