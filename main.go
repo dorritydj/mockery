@@ -7,53 +7,9 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
+
+	"mockery.dorrity.dj/internals"
 )
-
-type Endpoint struct {
-	Id       string `json:"id"`
-	Uri      string `json:"uri"`
-	Method   string `json:"method"`
-	Variants map[string]Variant
-}
-
-type Endpoints map[string]Endpoint
-
-type Variant struct {
-	Status  int  `json:"status"`
-	Default bool `json:"default"`
-	Body    any  `json:"body"`
-}
-
-func (e Endpoint) getDefaultResponse() Variant {
-	var found Variant
-	for _, v := range e.Variants {
-		if v.Default {
-			found = v
-		}
-	}
-
-	return found
-}
-
-func (e Endpoint) parseUri() string {
-	var parts []string
-	res := strings.Fields(strings.ReplaceAll(e.Uri, "/", " "))
-
-	for _, partition := range res {
-		colon := string(partition[0])
-		rest := string(partition[1:])
-
-		if strings.Compare(colon, ":") == 0 {
-			parts = append(parts, fmt.Sprintf("/{%s}", rest))
-			continue
-		}
-
-		parts = append(parts, fmt.Sprintf("/%s", partition))
-	}
-
-	return strings.Join(parts, "")
-}
 
 func main() {
 	dir := "./routes"
@@ -66,7 +22,7 @@ func main() {
 		}
 
 		if !d.IsDir() {
-			var endpoint Endpoint
+			var endpoint internals.Endpoint
 
 			file, err := os.ReadFile(path)
 			if err != nil {
@@ -80,9 +36,9 @@ func main() {
 
 			// fmt.Printf("%#v\n", endpoint)
 
-			req := fmt.Sprintf("%s %s", endpoint.Method, endpoint.parseUri())
+			req := fmt.Sprintf("%s %s", endpoint.Method, endpoint.ParseUri())
 			fmt.Println(req)
-			def := endpoint.getDefaultResponse()
+			def := endpoint.GetDefaultResponse()
 
 			mux.HandleFunc(req, func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(def.Status)
